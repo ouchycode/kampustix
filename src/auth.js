@@ -1,14 +1,7 @@
-// src/auth.js
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-// Konfigurasi NextAuth
-export const {
-  handlers, // <--- INI WAJIB ADA AGAR ERROR HILANG
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       name: "Credentials",
@@ -16,26 +9,31 @@ export const {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      // Logic Login
+      // LOGIKA PENGECEKAN PASSWORD DI SINI
       authorize: async (credentials) => {
-        // Ganti ini dengan logic cek database/env kamu yang sebenarnya
-        const user = null;
+        const { username, password } = credentials;
 
-        // Contoh Hardcode sementara (Hapus nanti jika sudah connect DB)
-        if (
-          credentials.username === "admin" &&
-          credentials.password === "admin123"
-        ) {
-          return { id: "1", name: "Admin", email: "admin@example.com" };
+        // Cek Hardcode: Username "admin" & Password "admin123"
+        if (username === "admin" && password === "admin123") {
+          // Jika benar, kembalikan data user (Dummy Data)
+          return {
+            id: "1",
+            name: "Super Admin",
+            email: "admin@kampustix.com",
+            role: "admin",
+          };
         }
 
-        // Return user jika sukses, return null jika gagal
-        return user;
+        // Jika salah, kembalikan null (Login Gagal)
+        return null;
       },
     }),
   ],
   pages: {
-    signIn: "/", // Redirect jika belum login
+    signIn: "/", // Jika user belum login, lempar ke home
   },
-  secret: process.env.AUTH_SECRET, // Wajib ada di .env
+  secret: process.env.AUTH_SECRET,
+  session: {
+    strategy: "jwt", // Wajib pakai JWT untuk credential login
+  },
 });
