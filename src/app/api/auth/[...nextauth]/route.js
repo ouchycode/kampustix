@@ -1,2 +1,2 @@
-import { handlers } from "@/auth"; // Import dari file src/auth.js tadi
+import { handlers } from "@/auth";
 export const { GET, POST } = handlers;
